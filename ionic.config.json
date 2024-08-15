@@ -1,0 +1,7 @@
+{
+  "name": "river",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
