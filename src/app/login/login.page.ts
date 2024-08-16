@@ -24,12 +24,12 @@ export class LoginPage {
       if (response.status === 'success') {
         this.storage.set('user_id', response.data.user_id);
         this.storage.set('username', response.data.username);
-        this.storage.set('cuenta_id', response.cuenta_id);
-        this.storage.set('user_rioid', response.user_rioid);
-        this.storage.set('user_nombre', response.user_nombre);
-        this.storage.set('user_email', response.user_email);
-        this.storage.set('est_id', response.est_id);
-        this.storage.set('user_apellido', response.user_apellido);
+        this.storage.set('cuenta_id', response.data.cuenta_id);
+        this.storage.set('user_rioid', response.data.user_rioid);
+        this.storage.set('user_nombre', response.data.user_nombre);
+        this.storage.set('user_email', response.data.user_email);
+        this.storage.set('est_id', response.data.est_id);
+        this.storage.set('user_apellido', response.data.user_apellido);
         this.storage.set('token', response.data.token);
         this.navCtrl.navigateForward('/home');
       } else {

@@ -9,18 +9,20 @@ import { NavController } from '@ionic/angular';
   styleUrls: ['./rios.page.scss'],
 })
 export class RiosPage implements OnInit {
+      userId: string = '';
+      cuentaid: string = '';
+      estadoId:string = '';
+      usuario: string = '';
+      nombre:string = '';
+      apellido:string = '';
+      rioid:string = '';
+      email:string = '';
   constructor(private storage: Storage, 
-    private userId: String,
-    private cuentaid: String,
-    private estadoId:String,
-    private usuario: String,
-    private nombre:String,
-    private apellido:String,
-    private rioid:String,
-    private email:String,
+    
     private riogetService : RiogetService) {}
 
   async ngOnInit() {
+    await this.storage.create();
     //recuperacion de datos
     this.userId = await this.storage.get('user_id');
     this.usuario = await this.storage.get('username');
