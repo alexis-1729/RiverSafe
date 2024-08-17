@@ -3,6 +3,7 @@ import { RiogetService } from '../services/rioget.service';
 import { AuthService } from '../services/auth.service';
 import { Storage } from '@ionic/storage-angular';
 import { NavController } from '@ionic/angular';
+import { MenuService } from '../services/menu.service';
 
 @Component({
   selector: 'app-register',
@@ -12,7 +13,7 @@ import { NavController } from '@ionic/angular';
 export class RegisterPage implements OnInit {
 
   constructor(private rioService: RiogetService, private authS: AuthService,
-    private storage: Storage, private navCtrl: NavController) {
+    private storage: Storage, private navCtrl: NavController, private menuS:MenuService) {
       this.storage.create();
      }
   selectedRio: string = '';
@@ -28,10 +29,12 @@ export class RegisterPage implements OnInit {
   password: string = '';
   repassword: string = '';
   ngOnInit() {
+    this.menuS.habilitarMenu(false);
     //carga la lista llamando a la funcion
     this.loadRios();
   }
 
+  
 
   loadRios() {
     this.rioService.getListaRios().subscribe(
@@ -65,6 +68,7 @@ export class RegisterPage implements OnInit {
           this.storage.set('est_id', response.data.est_id);
           this.storage.set('user_apellido', response.data.user_apellido);
           this.storage.set('token', response.data.token);
+          this.menuS.habilitarMenu(true);
           this.navCtrl.navigateForward('/home');
         } else {
           // Mostrar mensaje de error

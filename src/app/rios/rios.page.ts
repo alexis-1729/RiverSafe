@@ -17,6 +17,8 @@ export class RiosPage implements OnInit {
       apellido:string = '';
       rioid:string = '';
       email:string = '';
+      monitoreo_id:string = '';
+      disDt: any[] = [];
   constructor(private storage: Storage, 
     
     private riogetService : RiogetService) {}
@@ -34,16 +36,40 @@ export class RiosPage implements OnInit {
     this.apellido = await this.storage.get('user_apellido');
   }
 
-  obtenerRio(){
+  async obtenerRio(){
     this.riogetService.getRio(this.rioid).subscribe(response =>{
       if(response.status == 'sucess'){
         //cargo los datos
+        this.storage.set('monitoreo_id', response.data.monitoreo_id);
+        this.monitoreo_id = response.data.monitoreo_id;
       }else{
         console.log('Error', response.message);
       }
     }, error =>{
       console.error('Error en la peticion', error);
     });
+  }
+
+  obtenerDispositivos(){
+    this.riogetService.getListaDispositivos(this.monitoreo_id).subscribe(response=>{
+      if(response.status == 'success'){
+        //proceso de mandar datos del arreglo retornado
+        //obtengo los datos de la tabla dispositivos
+        const datos = response.data;
+
+        datos.foreach((dispositivo: any)=>{
+          this.disDt.push({
+            sensor_id:dispositivo.sensor_id,
+            circuito_nombre:dispositivo.circuito_nombre            
+        });
+        });
+      }else{
+        console.log('Obtencion de datos fallida', response.message);
+      }
+    }, error=>{
+      console.log('Erro en la peticion', error);
+    });
+    
   }
 
 }

@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
 import { AuthService } from '../services/auth.service';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
-
+import { MenuService } from '../services/menu.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -15,8 +15,13 @@ export class LoginPage {
   username: string = '';
   password: string = '';
 
-  constructor(private authService: AuthService, private navCtrl: NavController,private storage: Storage) {
+  constructor(private authService: AuthService, private navCtrl: NavController,
+    private storage: Storage, private menuS:MenuService) {
     this.storage.create(); //inicializar almacenammiento
+   }
+
+   ngOnInit(){
+    this.menuS.habilitarMenu(false);
    }
 
   login() {
@@ -31,6 +36,7 @@ export class LoginPage {
         this.storage.set('est_id', response.data.est_id);
         this.storage.set('user_apellido', response.data.user_apellido);
         this.storage.set('token', response.data.token);
+        this.menuS.habilitarMenu(true);
         this.navCtrl.navigateForward('/home');
       } else {
         // Mostrar mensaje de error
