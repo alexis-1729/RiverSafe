@@ -30,7 +30,7 @@ getUserLocation() {
 }
 //Obtiene la ubicación actual del usuario y la asigna a userLocation.
 
-
+  //IMPORTANTE LEER
   //Falta colocar userLocation en el login y que al iniciar sesion te pregunte sobre la ubicacion para que esta parte y las siguientes funcionen correctamente
 
   ngOnInit() {
