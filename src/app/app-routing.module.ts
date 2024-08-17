@@ -18,7 +18,12 @@ const routes: Routes = [
   {
     path: 'login',
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
+  },
+  {
+    path: 'datos-sensores',
+    loadChildren: () => import('./rios/datos-sensores/datos-sensores.module').then( m => m.DatosSensoresPageModule)
   }
+
 ];
 
 @NgModule({
