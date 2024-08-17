@@ -1,4 +1,9 @@
 import { Component } from '@angular/core';
+import { Storage } from '@ionic/storage-angular';
+import { MenuController } from '@ionic/angular';
+import { MenuService } from './services/menu.service';
+
+
 @Component({
   selector: 'app-root',
   templateUrl: 'app.component.html',
@@ -11,6 +16,21 @@ export class AppComponent {
     
     
   ];
-  //public labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
-  constructor() {}
-}
+  //acceder a datos del login
+   constructor(private menu: MenuController, private menuService: MenuService) {
+   }
+
+   ngOnInit(){
+    this.menuService.getMenu().subscribe((isEnable)=>{
+      if(isEnable){
+        this.menu.enable(true);
+      }else{
+        this.menu.enable(false);
+      }
+    });
+
+    }
+   }
+  
+
+

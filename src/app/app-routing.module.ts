@@ -22,6 +22,11 @@ const routes: Routes = [
   {
     path: 'datos-sensores',
     loadChildren: () => import('./rios/datos-sensores/datos-sensores.module').then( m => m.DatosSensoresPageModule)
+
+  },
+  {
+  path: 'register',
+    loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
   }
 
 ];

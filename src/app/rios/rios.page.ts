@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
+
+import { Storage } from '@ionic/storage-angular';
+import { RiogetService } from '../services/rioget.service';
+import { NavController } from '@ionic/angular';
 import { Geolocation } from'@ionic-native/geolocation/ngx';
 //instale geolocation de ionic para saber la ubicacion del usuario
+
 
 @Component({
   selector: 'app-rios',
@@ -8,13 +13,85 @@ import { Geolocation } from'@ionic-native/geolocation/ngx';
   styleUrls: ['./rios.page.scss'],
 })
 export class RiosPage implements OnInit {
+      userId: string = '';
+      cuentaid: string = '';
+      estadoId:string = '';
+      usuario: string = '';
+      nombre:string = '';
+      apellido:string = '';
+      rioid:string = '';
+      email:string = '';
+      monitoreo_id:string = '';
+      disDt: any[] = [];
+  constructor(private storage: Storage, private riogetService : RiogetService,private geolocation: Geolocation) {
+   this.getUserLocation();}
 
+
+  async ngOnInit() {
+    await this.storage.create();
+    //recuperacion de datos del login o registro para poder tener disponibles los datos en cualquier pagina
+    this.userId = await this.storage.get('user_id');
+    this.usuario = await this.storage.get('username');
+    this.cuentaid = await this.storage.get('cuenta_id');
+    this.rioid = await this.storage.get('user_rioid');
+    this.nombre = await this.storage.get('user_nombre');
+    this.email = await this.storage.get('user_email');
+    this.estadoId = await this.storage.get('est_id');
+    this.apellido = await this.storage.get('user_apellido');
+    
+    //obtencion de datos de usuario
+     this.getUserLocation();
+    this.geolocation.getCurrentPosition().then((resp) => {
+    this.userLocation = {
+      lat: resp.coords.latitude,
+      lng: resp.coords.longitude,
+    };
+    this.filterRivers();
+  });
+    
+  }
+
+  async obtenerRio(){
+    //conexion al servidor para que retorne los datos del rio segun sea el seleccionado
+    this.riogetService.getRio(this.rioid).subscribe(response =>{
+      if(response.status == 'sucess'){
+        //cargo los datos
+        this.storage.set('monitoreo_id', response.data.monitoreo_id);
+        this.monitoreo_id = response.data.monitoreo_id;
+      }else{
+        console.log('Error', response.message);
+      }
+    }, error =>{
+      console.error('Error en la peticion', error);
+    });
+  }
+
+  obtenerDispositivos(){
+    //se obtnienen los dispositivos segun sea el rio seleccionado
+    this.riogetService.getListaDispositivos(this.monitoreo_id).subscribe(response=>{
+      if(response.status == 'success'){
+        //proceso de mandar datos del arreglo retornado
+        //obtengo los datos de la tabla dispositivos
+        const datos = response.data;
+
+        datos.foreach((dispositivo: any)=>{
+          this.disDt.push({
+            sensor_id:dispositivo.sensor_id,
+            circuito_nombre:dispositivo.circuito_nombre            
+        });
+        });
+      }else{
+        console.log('Obtencion de datos fallida', response.message);
+      }
+    }, error=>{
+      console.log('Erro en la peticion', error);
+    });
+  }
+    
   userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
-rivers: any[] = [];  // Aquí pondremos los datos de los ríos
+   rivers: any[] = [];  // Aquí pondremos los datos de los ríos
 
-constructor(private geolocation: Geolocation) {
-  this.getUserLocation();
-}
+
 
 getUserLocation() {
   this.geolocation.getCurrentPosition().then((resp) => {
@@ -33,17 +110,6 @@ getUserLocation() {
   //IMPORTANTE LEER
   //Falta colocar userLocation en el login y que al iniciar sesion te pregunte sobre la ubicacion para que esta parte y las siguientes funcionen correctamente
 
-  ngOnInit() {
-    this.getUserLocation();
-    this.geolocation.getCurrentPosition().then((resp) => {
-    this.userLocation = {
-      lat: resp.coords.latitude,
-      lng: resp.coords.longitude,
-    };
-    this.filterRivers();
-  });
-}
-
 
 
   getRivers() {
@@ -54,6 +120,7 @@ getUserLocation() {
       // este es un ejemplo, reemplazar por el rio chiquito y sus coordenadadas correctas
       //Tambien falta colocar justo aqui la conexion al servidor para los dispositivos
     ];
+
   }
 
   calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
