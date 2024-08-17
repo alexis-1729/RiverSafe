@@ -20,9 +20,15 @@ const routes: Routes = [
     loadChildren: () => import('./login/login.module').then( m => m.LoginPageModule)
   },
   {
-    path: 'register',
+    path: 'datos-sensores',
+    loadChildren: () => import('./rios/datos-sensores/datos-sensores.module').then( m => m.DatosSensoresPageModule)
+
+  },
+  {
+  path: 'register',
     loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
   }
+
 ];
 
 @NgModule({
