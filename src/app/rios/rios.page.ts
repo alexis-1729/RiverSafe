@@ -13,6 +13,7 @@ import { Geolocation } from'@ionic-native/geolocation/ngx';
   styleUrls: ['./rios.page.scss'],
 })
 export class RiosPage implements OnInit {
+  //Variables para guardar los datos de sesion
       userId: string = '';
       cuentaid: string = '';
       estadoId:string = '';
@@ -22,14 +23,17 @@ export class RiosPage implements OnInit {
       rioid:string = '';
       email:string = '';
       monitoreo_id:string = '';
-      disDt: any[] = [];
+      disDt: any[] = [];//lsita de dispositivos
       userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
-      rivers: any[] = [];  // Aquí pondremos los datos de los ríos
+      rivers: any[] = []; //lista de rios 
+      sensores: any[] = [];
+    //constructor que inicializa algunos servicios  
   constructor(private storage: Storage, private riogetService : RiogetService,
     private geolocation: Geolocation) {
    }
 
 
+   //funcion que inicia al abrir la pagina rios
   async ngOnInit() {
     await this.storage.create();
     //recuperacion de datos del login o registro para poder tener disponibles los datos en cualquier pagina
@@ -41,11 +45,10 @@ export class RiosPage implements OnInit {
     this.email = await this.storage.get('user_email');
     this.estadoId = await this.storage.get('est_id');
     this.apellido = await this.storage.get('user_apellido');
-    
     this.getUserLocation();
-    
   }
 
+  //funcion para obtener un rio en especifico
   async obtenerRio(){
     //conexion al servidor para que retorne los datos del rio segun sea el seleccionado
     this.riogetService.getRio(this.rioid).subscribe(response =>{
@@ -61,9 +64,10 @@ export class RiosPage implements OnInit {
     });
   }
 
-  obtenerDispositivos(){
-    //se obtnienen los dispositivos segun sea el rio seleccionado
-    this.riogetService.getListaDispositivos(this.monitoreo_id).subscribe(response=>{
+
+  //obtine los dispositivos mediante el id del rio
+  obtenerDispositivos(id:string){
+    this.riogetService.getListaDispositivos(id).subscribe(response=>{
       if(response.status == 'success'){
         //proceso de mandar datos del arreglo retornado
         //obtengo los datos de la tabla dispositivos
@@ -71,7 +75,7 @@ export class RiosPage implements OnInit {
 
         datos.foreach((dispositivo: any)=>{
           this.disDt.push({
-            sensor_id:dispositivo.sensor_id,
+            sensor_id:dispositivo.circuito_id,
             circuito_nombre:dispositivo.circuito_nombre            
         });
         });
@@ -86,7 +90,7 @@ export class RiosPage implements OnInit {
  
 
 
-
+//Obtiene la ubicación actual del usuario y la asigna a userLocation.
 async getUserLocation() {
   try {
     const position = await this.geolocation.getCurrentPosition();
@@ -97,34 +101,29 @@ async getUserLocation() {
   } catch (error) {
     console.error('Error obteniendo la ubicación:', error);
   }
-  // this.geolocation.getCurrentPosition().then((resp) => {
-  //   this.userLocation = {
-  //     lat: resp.coords.latitude,
-  //     lng: resp.coords.longitude
-  //   };
-  // }).catch((error) => {
-  //   console.error('Error getting location', error);
-  //   // En caso de error se pueden asignar valores por defecto o manejar el error de otra manera
-  //   this.userLocation = { lat: 0, lng: 0 };
-  // });
+ 
 }
-//Obtiene la ubicación actual del usuario y la asigna a userLocation.
 
-  //IMPORTANTE LEER
-  //Falta colocar userLocation en el login y que al iniciar sesion te pregunte sobre la ubicacion para que esta parte y las siguientes funcionen correctamente
-
-
-
+//!!!!Añadir funcion para obtener rios
+//funcion para obtener los rios
   getRivers() {
-    // Retorna un array de objetos con datos de los ríos y dispositivos
-    return [
-      { nombre: 'Río Amazonas', estado: 'Activo', longitud: -70.5, latitud: -3.5, dispositivos: [/* datos dispositivos */] },
-      // Más ríos...
-      // este es un ejemplo, reemplazar por el rio chiquito y sus coordenadadas correctas
-      //Tambien falta colocar justo aqui la conexion al servidor para los dispositivos
-    ];
+    this.riogetService.getListaRios().subscribe(response=>{
+      if(response.status=='success'){
+     this.rivers= response.data;
+        
+     }else{
+      console.log('obtencion de datos fallida', response.message);
+     }
+    });
+    return this.rivers;
 
   }
+
+   //Convierte grados a radianes, necesario para los cálculos trigonométricos.
+   deg2rad(deg: number): number {
+    return deg * (Math.PI / 180);
+  }
+    //Implementa la fórmula del Haversine para calcular la distancia entre dos puntos geográficos.
 
   calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
     const R = 6371; // Radio de la Tierra en kilómetros
@@ -138,21 +137,16 @@ async getUserLocation() {
     const distance = R * c; // Distancia en kilómetros
     return distance;
   }
-  //Implementa la fórmula del Haversine para calcular la distancia entre dos puntos geográficos.
   
-  deg2rad(deg: number): number {
-    return deg * (Math.PI / 180);
-  }
-  //Convierte grados a radianes, necesario para los cálculos trigonométricos.
   
-
+//Recibe un objeto river con las propiedades lat y lng. Calcula la distancia entre la ubicación del usuario (this.userLocation) 
+  //y el río, y determina si el río está dentro de un rango aceptable (maxDistance).
   isNearUser(river: { lat: number, lng: number }): boolean {
     const distance = this.calculateDistance(river.lat, river.lng, this.userLocation.lat, this.userLocation.lng);
     const maxDistance = 50; // Distancia máxima en kilómetros para considerar que un río está "cerca"
     return distance <= maxDistance;
   }
-  //Recibe un objeto river con las propiedades lat y lng. Calcula la distancia entre la ubicación del usuario (this.userLocation) 
-  //y el río, y determina si el río está dentro de un rango aceptable (maxDistance).
+  
   
   filterRivers() {
     // Filtra los ríos basados en la ubicación del usuario
@@ -160,13 +154,38 @@ async getUserLocation() {
       console.warn('User location is not defined yet.');
       return;
     }
-    this.rivers = this.getRivers().filter(river => {
-      const transformedRiver = {
-        lat: river.latitud,
-        lng: river.longitud
-      };
-      return this.isNearUser(transformedRiver);
+      this.rivers.forEach((riv: any)=>{
+       this.riogetService.getUbi(riv.riverubi_id).subscribe(response=>{
+          if(response.status == 'success'){
+            const transformedRiver = {
+              lat: response.data.ubi_latitud,
+              lng: response.data.ubi_longitud
+            };
+
+            if(this.isNearUser(transformedRiver)){
+              //llamado a la funcion para para almacenar los dispositivos
+              //con el rio cercano
+              this.obtenerDispositivos(riv.data.monitoreo_id);
+            }
+          }else{
+            console.log('Obtencion de datos fallida', response.message);
+          }
+       });
+      
     });
+  }
+
+  //funcion para obtener los sensores de los rios cercanos
+  obtenerSesores(){
+    this.disDt.forEach(disp =>{
+      this.riogetService.getSensor(disp.sensor_id).subscribe(response=>{
+        if(response.status == 'success'){
+            this.sensores = response.data;
+        }else{
+          console.log('Operacion Fallida');
+        }
+      });
+    })
   }
   
 }
