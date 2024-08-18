@@ -23,8 +23,11 @@ export class RiosPage implements OnInit {
       email:string = '';
       monitoreo_id:string = '';
       disDt: any[] = [];
-  constructor(private storage: Storage, private riogetService : RiogetService,private geolocation: Geolocation) {
-   this.getUserLocation();}
+      userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
+      rivers: any[] = [];  // Aquí pondremos los datos de los ríos
+  constructor(private storage: Storage, private riogetService : RiogetService,
+    private geolocation: Geolocation) {
+   }
 
 
   async ngOnInit() {
@@ -39,15 +42,7 @@ export class RiosPage implements OnInit {
     this.estadoId = await this.storage.get('est_id');
     this.apellido = await this.storage.get('user_apellido');
     
-    //obtencion de datos de usuario
-     this.getUserLocation();
-    this.geolocation.getCurrentPosition().then((resp) => {
-    this.userLocation = {
-      lat: resp.coords.latitude,
-      lng: resp.coords.longitude,
-    };
-    this.filterRivers();
-  });
+    this.getUserLocation();
     
   }
 
@@ -88,22 +83,30 @@ export class RiosPage implements OnInit {
     });
   }
     
-  userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
-   rivers: any[] = [];  // Aquí pondremos los datos de los ríos
+ 
 
 
 
-getUserLocation() {
-  this.geolocation.getCurrentPosition().then((resp) => {
-    this.userLocation = {
-      lat: resp.coords.latitude,
-      lng: resp.coords.longitude
-    };
-  }).catch((error) => {
-    console.error('Error getting location', error);
-    // En caso de error se pueden asignar valores por defecto o manejar el error de otra manera
-    this.userLocation = { lat: 0, lng: 0 };
-  });
+async getUserLocation() {
+  try {
+    const position = await this.geolocation.getCurrentPosition();
+    this.userLocation.lat = position.coords.latitude;
+    this.userLocation.lng = position.coords.longitude;
+    console.log('Latitud:', this.userLocation.lat);
+    console.log('Longitud:', this.userLocation.lng);
+  } catch (error) {
+    console.error('Error obteniendo la ubicación:', error);
+  }
+  // this.geolocation.getCurrentPosition().then((resp) => {
+  //   this.userLocation = {
+  //     lat: resp.coords.latitude,
+  //     lng: resp.coords.longitude
+  //   };
+  // }).catch((error) => {
+  //   console.error('Error getting location', error);
+  //   // En caso de error se pueden asignar valores por defecto o manejar el error de otra manera
+  //   this.userLocation = { lat: 0, lng: 0 };
+  // });
 }
 //Obtiene la ubicación actual del usuario y la asigna a userLocation.
 
