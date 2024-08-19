@@ -4,6 +4,7 @@ import { Storage } from '@ionic/storage-angular';
 import { RiogetService } from '../services/rioget.service';
 import { NavController } from '@ionic/angular';
 import { Geolocation } from'@ionic-native/geolocation/ngx';
+import { AlertaService } from '../services/alerta.service';
 //instale geolocation de ionic para saber la ubicacion del usuario
 
 
@@ -29,7 +30,7 @@ export class RiosPage implements OnInit {
       sensores: any[] = [];
     //constructor que inicializa algunos servicios  
   constructor(private storage: Storage, private riogetService : RiogetService,
-    private geolocation: Geolocation) {
+    private geolocation: Geolocation, private alert: AlertaService) {
    }
 
 
@@ -101,7 +102,6 @@ async getUserLocation() {
   } catch (error) {
     console.error('Error obteniendo la ubicación:', error);
   }
- 
 }
 
 //!!!!Añadir funcion para obtener rios
@@ -185,6 +185,55 @@ async getUserLocation() {
           console.log('Operacion Fallida');
         }
       });
+    })
+  }
+
+  //preocedimiento para una alerta
+  //-----------------------------------------------
+  usuarios: any[] = [];
+  alerta(){
+    if(this.cuentaid == '1' || this.cuentaid == '3'){
+      //obtengo el id del rio que monitoreo
+        this.alert.getUserest(this.estadoId).subscribe(response =>{
+          if(response.status == 'success'){
+            //obtengo user por el estado que monitorea mi admin
+            this.usuarios = response.data;
+            
+          }else{
+            console.log('operacion fallida', response.message);
+          }
+        });
+    }
+  }
+  //se obtiene la posiscion actual del user 
+  userspos: any[] = [];
+   getPos(){
+    this.usuarios.forEach((user:any)=>{
+      this.alert.getPos(user.user_id).subscribe(response=>{
+        if(response.status == 'success'){
+        this.userspos.push({
+          user_id: response.data.user_id,
+          lattitud: response.data.latitud,
+          longitud: response.data.longitud,
+          userpos_id:response.data.userpos_id
+       });
+      }else{
+        console.log('error', response.message);
+      }
+      });
+    });
+   }
+
+   //metodo para filtrar usuarios cercanos a un rio en cuestion
+  filtrarUsers(){
+    this.userspos.forEach(pos =>{
+      const transformedRiver = {
+        lat: pos.latitud,
+        lng: pos.longitud
+      };
+      if(this.isNearUser(transformedRiver)){
+          this.alert.envialert(pos.userpos_id);
+      }
     })
   }
   

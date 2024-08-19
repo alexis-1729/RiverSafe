@@ -5,6 +5,7 @@ import { AuthService } from '../services/auth.service';
 import { NavController } from '@ionic/angular';
 import { Storage } from '@ionic/storage-angular';
 import { MenuService } from '../services/menu.service';
+import { Geolocation } from'@ionic-native/geolocation/ngx';
 @Component({
   selector: 'app-login',
   templateUrl: './login.page.html',
@@ -14,14 +15,37 @@ export class LoginPage {
 
   username: string = '';
   password: string = '';
+  userid:string ='';
+  userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
 
   constructor(private authService: AuthService, private navCtrl: NavController,
-    private storage: Storage, private menuS:MenuService) {
+    private storage: Storage, private menuS:MenuService,
+    private geolocation: Geolocation) {
     this.storage.create(); //inicializar almacenammiento
    }
 
    ngOnInit(){
     this.menuS.habilitarMenu(false);
+   }
+
+  async getPos(){
+    try {
+      const position = await this.geolocation.getCurrentPosition();
+      this.storage.set('userLat',position.coords.latitude);
+      this.storage.set('userLng',position.coords.longitude);
+      this.guardarPos(position.coords.latitude,position.coords.longitude);
+    } catch (error) {
+      console.error('Error obteniendo la ubicación:', error);
+    }
+   }
+   
+   async guardarPos(latitud:number, longitud:number){
+    this.userid = await this.storage.get('user_id');
+      this.authService.savePos(this.userid,latitud, longitud).subscribe(response =>{
+        if(response.status == 'error'){
+          console.log('Erro', response.message);
+        }
+      });
    }
 
   login() {
@@ -37,6 +61,7 @@ export class LoginPage {
         this.storage.set('user_apellido', response.data.user_apellido);
         this.storage.set('token', response.data.token);
         this.menuS.habilitarMenu(true);
+        this.getPos();
         this.navCtrl.navigateForward('/home');
       } else {
         // Mostrar mensaje de error

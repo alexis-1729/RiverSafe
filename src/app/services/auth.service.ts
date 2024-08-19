@@ -10,7 +10,7 @@ export class AuthService {
 
   private apiUrl = 'http://localhost/riversf/public/APIU/login'; //ruta de la api
   private apiUrl2 = 'http://localhost/riversf/public/APIU/registrar';
-  
+  private apiUrl3 = 'http://localhost/riversf/public/APIU/saveUserpos';
   constructor(private http: HttpClient) { }
     
   //logear 
@@ -50,6 +50,17 @@ export class AuthService {
      };
      // { headers: headers }
      return this.http.post<any>(this.apiUrl2, body);
+   }
+
+   savePos(user_id:string, latitud:number, longitud:number): Observable<any>{
+    const body = {
+      user_id:user_id,
+      latitud:latitud,
+      longitud: longitud
+     };
+
+     return this.http.post<any>(this.apiUrl3, body);
+
    }
 
 }
