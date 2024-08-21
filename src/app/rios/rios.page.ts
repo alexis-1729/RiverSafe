@@ -35,7 +35,7 @@ export class RiosPage implements OnInit {
   constructor(private storage: Storage, private riogetService : RiogetService,
     private geolocation: Geolocation, private alert: AlertaService,
   private authS:AuthService) {
-      this.initializePushNotifications();
+      
    }
 
 
@@ -57,44 +57,7 @@ export class RiosPage implements OnInit {
   //--------------------------------------------
   //notificaciones push
     // Método para inicializar y configurar notificaciones push
-    async initializePushNotifications() {
-      // Solicitar permisos
-      const permStatus = await PushNotifications.requestPermissions();
-  
-      if (permStatus.receive === 'granted') {
-        // Registrar para recibir notificaciones
-        await PushNotifications.register();
-  
-         // Obtener el token de FCM
-        const tokenResult = await FirebaseMessaging.getToken();
-        const token = tokenResult.token;
-        console.log('FCM Token:', token);
-         // Aquí puedes enviar el token al backend para asociarlo con el usuario
-        
-        this.authS.asociartoken(token, this.userId);
-
-
-        // Manejar la recepción de notificaciones
-        PushNotifications.addListener('pushNotificationReceived', (notification) => {
-          console.log('Notificación recibida:', notification);
-          // Aquí puedes manejar la notificación recibida y actualizar la UI si es necesario
-        });
-      } else {
-        console.log('Permiso para recibir notificaciones no concedido');
-      }
-    }
-
-     // Método que envía notificaciones a los usuarios
-  notificationUser(userIds: string[]) {
-    // Aquí iría la lógica para enviar los IDs de los usuarios al backend
-    // que luego enviará las notificaciones push a través de FCM
-    // Ejemplo:
-    userIds.forEach(userId => {
-      console.log(`Enviando notificación al usuario con ID: ${userId}`);
-      // Llamada al backend para enviar la notificación
-      // this.backendService.sendPushNotification(userId, messageData);
-    });
-  }
+   
     //------------------------------------------------------------------------------------------------
   //funcion para obtener un rio en especifico
   async obtenerRio(){
