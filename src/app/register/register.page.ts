@@ -4,6 +4,7 @@ import { AuthService } from '../services/auth.service';
 import { Storage } from '@ionic/storage-angular';
 import { NavController } from '@ionic/angular';
 import { MenuService } from '../services/menu.service';
+import { Geolocation } from'@ionic-native/geolocation/ngx';
 
 @Component({
   selector: 'app-register',
@@ -13,7 +14,8 @@ import { MenuService } from '../services/menu.service';
 export class RegisterPage implements OnInit {
 
   constructor(private rioService: RiogetService, private authS: AuthService,
-    private storage: Storage, private navCtrl: NavController, private menuS:MenuService) {
+    private storage: Storage, private navCtrl: NavController, 
+    private menuS:MenuService,private geolocation: Geolocation) {
       this.storage.create();
      }
   selectedRio: string = '';
@@ -28,13 +30,32 @@ export class RegisterPage implements OnInit {
   celular: string = '';
   password: string = '';
   repassword: string = '';
+  userid:string ='';
   ngOnInit() {
     this.menuS.habilitarMenu(false);
     //carga la lista llamando a la funcion
     this.loadRios();
   }
 
-  
+  async getPos(){
+    try {
+      const position = await this.geolocation.getCurrentPosition();
+      this.storage.set('userLat',position.coords.latitude);
+      this.storage.set('userLng',position.coords.longitude);
+      this.guardarPos(position.coords.latitude,position.coords.longitude);
+    } catch (error) {
+      console.error('Error obteniendo la ubicación:', error);
+    }
+   }
+
+   async guardarPos(latitud:number, longitud:number){
+    this.userid = await this.storage.get('user_id');
+      this.authS.savePos(this.userid,latitud, longitud).subscribe(response =>{
+        if(response.status == 'error'){
+          console.log('Erro', response.message);
+        }
+      });
+   }
 
   loadRios() {
     this.rioService.getListaRios().subscribe(
@@ -69,6 +90,7 @@ export class RegisterPage implements OnInit {
           this.storage.set('user_apellido', response.data.user_apellido);
           this.storage.set('token', response.data.token);
           this.menuS.habilitarMenu(true);
+          this.getPos();
           this.navCtrl.navigateForward('/home');
         } else {
           // Mostrar mensaje de error
