@@ -5,6 +5,9 @@ import { RiogetService } from '../services/rioget.service';
 import { NavController } from '@ionic/angular';
 import { Geolocation } from'@ionic-native/geolocation/ngx';
 import { AlertaService } from '../services/alerta.service';
+import { PushNotifications, Token } from '@capacitor/push-notifications';
+import { FirebaseMessaging } from '@capacitor-firebase/messaging';
+import { AuthService } from '../services/auth.service';
 //instale geolocation de ionic para saber la ubicacion del usuario
 
 
@@ -31,7 +34,9 @@ export class RiosPage implements OnInit {
       sensores: any[] = [];
     //constructor que inicializa algunos servicios  
   constructor(private storage: Storage, private riogetService : RiogetService,
-    private geolocation: Geolocation, private alert: AlertaService) {
+    private geolocation: Geolocation, private alert: AlertaService,
+  private authS:AuthService) {
+      
    }
 
 
@@ -51,6 +56,11 @@ export class RiosPage implements OnInit {
     this.obtenerRio();
   }
 
+  //--------------------------------------------
+  //notificaciones push
+    // Método para inicializar y configurar notificaciones push
+   
+    //------------------------------------------------------------------------------------------------
   //funcion para obtener un rio en especifico
   async obtenerRio(){
     //conexion al servidor para que retorne los datos del rio segun sea el seleccionado

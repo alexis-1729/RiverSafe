@@ -11,6 +11,8 @@ export class AuthService {
   private apiUrl = 'http://localhost/riversf/public/APIU/login'; //ruta de la api
   private apiUrl2 = 'http://localhost/riversf/public/APIU/registrar';
   private apiUrl3 = 'http://localhost/riversf/public/APIU/saveUserpos';
+  private apiUrl4 = 'http://localhost/riversf/public/APIU/associateToken';
+
   constructor(private http: HttpClient) { }
     
   //logear 
@@ -60,7 +62,14 @@ export class AuthService {
      };
 
      return this.http.post<any>(this.apiUrl3, body);
+   }
 
+   asociartoken(token:string, user_id:string){
+    const body={
+      token:token,
+      user_id:user_id
+    };
+    return this.http.post<any>(this.apiUrl4,body);
    }
 
 }
