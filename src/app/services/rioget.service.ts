@@ -46,7 +46,7 @@ export class RiogetService {
 
   getSensor(sensor_id:string): Observable<any>{
     const body={
-      sensor_id_id:sensor_id
+      sensor_id:sensor_id
     }
     return this.http.post(this.apiUrl5, body);
   }
