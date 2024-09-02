@@ -31,6 +31,7 @@ export class RiosPage implements OnInit {
       disDt: any[] = [];//lsita de dispositivos
       userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
       rivers: any[] = []; //lista de rios 
+      riverst: any[] = []; 
       sensores: any[] = [];
     //constructor que inicializa algunos servicios  
   constructor(private storage: Storage, private riogetService : RiogetService,
@@ -52,14 +53,10 @@ export class RiosPage implements OnInit {
     this.email = await this.storage.get('user_email');
     this.estadoId = await this.storage.get('est_id');
     this.apellido = await this.storage.get('user_apellido');
-    this.getUserLocation();
-    this.obtenerRio();
+   await this.getUserLocation();
+    this.ejecutar();
   }
 
-  //--------------------------------------------
-  //notificaciones push
-    // Método para inicializar y configurar notificaciones push
-   
     //------------------------------------------------------------------------------------------------
   //funcion para obtener un rio en especifico
   async obtenerRio(){
@@ -80,20 +77,31 @@ export class RiosPage implements OnInit {
 
 
   //obtine los dispositivos mediante el id del rio
-  obtenerDispositivos(id:string){
-    this.riogetService.getListaDispositivos(id).subscribe(response=>{
-      if(response.status == 'success'){
-        //proceso de mandar datos del arreglo retornado
-        //obtengo los datos de la tabla dispositivos
-        this.disDt  = response.data;
-        console.log('dispositivo obtenido');
-      }else{
-        console.log('Obtencion de datos fallida', response.message);
-      }
-    }, error=>{
-      console.log('Erro en la peticion', error);
-    });
-  }
+  async obtenerDispositivos(id:string){
+   // return new Promise((resolve=>{
+  //   setTimeout(()=>{
+   console.log(id);
+      this.riogetService.getListaDispositivos(id).subscribe(response=>{
+        if(response.status == 'success'){
+           //proceso de mandar datos del arreglo retornado
+           //obtengo los datos de la tabla dispositivos
+           for(let i = 0;  i < response.data.length; i++)
+           this.disDt.push(response.data[i]);
+          //  console.log(response.data);
+           //console.log('dispositivo obtenido');
+           //console.log(this.disDt.length);
+           this.storage.set('disp', this.disDt);
+         }else{
+           console.log('Obtencion de datos fallida', response.message);
+         }
+       }, error=>{
+         console.log('Erro en la peticion', error);
+       });
+   //     resolve(true);
+   //   },1000);
+   // })); 
+  
+   }
     
  
 
@@ -105,8 +113,6 @@ async getUserLocation() {
     const position = await this.geolocation.getCurrentPosition();
     this.userLocation.lat = position.coords.latitude;
     this.userLocation.lng = position.coords.longitude;
-    console.log('Latitud:', this.userLocation.lat);
-    console.log('Longitud:', this.userLocation.lng);
     this.alert.savePos(this.userId,this.userLocation.lat,this.userLocation.lng).subscribe(response=>{
       if(response.status == 'success'){
         console.log('ubicacion registrada con exito');
@@ -119,16 +125,23 @@ async getUserLocation() {
 
 //!!!!Añadir funcion para obtener rios
 //funcion para obtener los rios
-  getRivers() {
-    this.riogetService.getListaRios().subscribe(response=>{
-      if(response.status=='success'){
-     this.rivers= response.data;
-        console.log('operacion exitos getrivers');
-     }else{
-      console.log('obtencion de datos fallida', response.message);
-     }
-    });
+ async getRivers() {
+  return new Promise((resolve=>{
+    setTimeout(()=>{
+      this.riogetService.getListaRios().subscribe(response=>{
+        if(response.status=='success'){
+       this.rivers= response.data;
+          console.log('operacion exitos getrivers');
+       }else{
+        console.log('obtencion de datos fallida', response.message);
+       }
+      });
 
+      resolve(true);
+    },2000);
+    
+
+  }));
   }
 
    //Convierte grados a radianes, necesario para los cálculos trigonométricos.
@@ -140,7 +153,7 @@ async getUserLocation() {
 
   calculateDistance(lat1: number, lng1: number, lat2: number, lng2: number): number {
    // console.log('calculando distancias');
-   console.log(lat1, ' ', lng1, ' ', lat2, ' ', lng2);
+   //console.log(lat1, ' ', lng1, ' ', lat2, ' ', lng2);
     const R = 6371; // Radio de la Tierra en kilómetros
     lat1 = this.deg2rad(lat1);
     lng1 = this.deg2rad(lng1);
@@ -155,7 +168,7 @@ async getUserLocation() {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distance = R * c; // Distancia en kilómetros
 
-    console.log('distancia entre el rio y el user ',distance);
+   // console.log('distancia entre el rio y el user ',distance);
     return distance;
   }
   
@@ -169,53 +182,88 @@ async getUserLocation() {
     return distance <= maxDistance;
   }
   
+  // rivid:any[]=[];
+  async filterRivers() {
+   return new Promise((resolve =>{
+    setTimeout(()=>{
+      if (!this.userLocation) {
+        console.log('User location is not defined yet.');
+        return;
+      }
+        this.rivers.forEach((riv: any)=>{
+          //console.log(riv.riverubi_id, ' id');
+         this.riogetService.getUbi(riv.riverubi_id).subscribe(response=>{
+            if(response.status == 'success'){
+              //console.log(response.data.ubi_latitud);
+              const transformedRiver = {
+                lat: response.data.ubi_latitud,
+                lng: response.data.ubi_longitud
+                
+              };
+              //console.log(transformedRiver.lat,' ', transformedRiver.lng);
   
-  filterRivers() {
-    console.log('clic');
+              if(this.isNearUser(transformedRiver, this.userLocation.lat, this.userLocation.lng)){
+                //llamado a la funcion para para almacenar los dispositivos
+                //con el rio cercano
+                this.riverst.push({
+                  nombre:riv.monitoreo_nombre,
+                  longitud:transformedRiver.lng,
+                  latitud:transformedRiver.lat
+                });
+                // this.rivid.push(riv.riverubi_id);
+               this.obtenerDispositivos(riv.monitoreo_id);
+              }else console.log('no esta cerca');
+            }else{
+              console.log('Obtencion de datos fallida', response.message);
+            }
+         });
+      });
+    //  
+      resolve(true);
+    },2000);
+   }));
     // Filtra los ríos basados en la ubicación del usuario
-    if (!this.userLocation) {
-      console.log('User location is not defined yet.');
-      return;
-    }
-      this.rivers.forEach((riv: any)=>{
-        console.log(riv.riverubi_id, ' id');
-       this.riogetService.getUbi(riv.riverubi_id).subscribe(response=>{
-          if(response.status == 'success'){
-            //console.log(response.data.ubi_latitud);
-            const transformedRiver = {
-              lat: response.data.ubi_latitud,
-              lng: response.data.ubi_longitud
-              
-            };
-            //console.log(transformedRiver.lat,' ', transformedRiver.lng);
+   
+  }
 
-            if(this.isNearUser(transformedRiver, this.userLocation.lat, this.userLocation.lng)){
-              //llamado a la funcion para para almacenar los dispositivos
-              //con el rio cercano
-              this.obtenerDispositivos(riv.monitoreo_id);
-            }else console.log('no esta cerca');
-          }else{
-            console.log('Obtencion de datos fallida', response.message);
-          }
-       });
-      
-    });
+  async ejecutar(){
+    try{
+      await this.getRivers();
+      await this.filterRivers();
+      console.log('termino');
+      // this.storage.set('rio',this.rivid);
+    }catch(error){
+console.log('error', error);
+    }
+    // console.log(this.disDt.length);
   }
 
   //funcion para obtener los sensores de los rios cercanos
-  obtenerSesores(){
-    this.disDt.forEach(disp =>{
-      console.log(disp.sensor_id);
-      this.riogetService.getSensor(disp.sensor_id).subscribe(response=>{
-        if(response.status == 'success'){
-            this.sensores = response.data;
-            console.log('operacion obtencion de sensores por dispositivo ', disp.sensor_id);
-        }else{
-          console.log('Operacion Fallida');
-        }
-      });
-    })
-  }
+  // async obtenerSesores(){
+  //    console.log(this.disDt);
+  //    for(let i = 0; i < this.disDt.length; i++){
+  //     this.riogetService.getSensor(this.disDt[i]).subscribe(response=>{
+  //       if(response.status == 'success'){
+  //         console.log(response.data.length);
+  //         for(let i = 0; i <response.data.length; i++){
+  //           this.sensores.push({
+  //             nivelAgua:response.data[i].sens_nivel,
+  //             temperatura:response.data[i].sens_temp,
+  //             velocidadCorriente:response.data[i].sens_vel,
+  //           });
+  //         }
+  //         // console.log(this.sensores);
+  //         this.storage.set('sen', this.sensores);
+  //           console.log('operacion obtencion de sensores por dispositivo ');
+  //       }else{
+  //         console.log('Operacion Fallida');
+  //       }
+  //     });
+  //    }
+     
+     
+  //  }
+
 
   //preocedimiento para una alerta
   //-----------------------------------------------
@@ -280,5 +328,34 @@ async getUserLocation() {
       }
     })
   }
+
+  // ----------------------------------------
+  //USO DE FIREBASE
+  tok:any;
+  //solicita permiso y despues envia un token para asociarlo al user
+    pushNoti(){
+      PushNotifications.requestPermissions().then(permission => {
+        if (permission.receive === 'granted') {
+          PushNotifications.register();
+          console.log('permiso concedido');
+        }
+      });
+      PushNotifications.addListener('registration', (token: Token) => {
+        // Aquí envías el token a tu backend (API en CodeIgniter)
+        this.tok = token.value;
+        this.alert.saveToken(token.value, this.userId).subscribe(response=>{
+          if(response.status == 'success'){
+            console.log('se asocio el token');
+          }else console.log('fallo al asociarlo');
+        });
+      });
+    }
+
+//envia la notificacion
+    titl:any = 'peligro rio';
+    body:any ='Favor de realizar las medidas preventivas';
+    sendAlert(){
+      this.alert.sendNoti(this.tok, this.titl,this.body);
+    }
   
 }

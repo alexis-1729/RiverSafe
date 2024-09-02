@@ -7,10 +7,14 @@ import { Observable} from 'rxjs';
 })
 export class AlertaService {
 
-  private apiUrl = 'http://localhost/riversf/public/APIU/getUserpos'
-  private apiUrl2 = 'http://localhost/riversf/public/APIU/getUserest'
+ 
+  private apiUrl = 'http://localhost/riversf/public/APIU/getUserpos';
+  private apiUrl2 = 'http://localhost/riversf/public/APIU/getUserest';
   private apiUrl3 = 'http://localhost/riversf/public/APIU/idalert';
   private apiUrl4 = 'http://localhost/riversf/public/APIU/saveUserpos';
+  private apiUrl5 = 'http://localhost/riversf/public/APIU/associateToken';
+  private apiUrl6 = 'http://localhost/riversf/public/APIU/sendNotification';
+
   constructor(private http: HttpClient) { }
 
   savePos(user_id:string, latitud:number, longitud:number):Observable<any>{
@@ -39,5 +43,21 @@ export class AlertaService {
       userpos_id:userpos_id
     }
     return this.http.post<any>(this.apiUrl3,body);
+  }
+  saveToken(token:any, user_id:string):Observable<any>{
+    const body={
+      token:token
+      ,user_id:user_id
+    }
+    return this.http.post<any>(this.apiUrl5,body);
+  }
+
+  sendNoti(token:any, title:any, body:any){
+    const dt={
+      to:token,
+      title:title,
+      body:body
+    }
+return this.http.post<any>(this.apiUrl6, dt);
   }
 }

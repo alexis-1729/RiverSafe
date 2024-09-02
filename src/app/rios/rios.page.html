@@ -1,21 +1,48 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-title>rios</ion-title>
-  </ion-toolbar>
-</ion-header>
 
-<ion-content [fullscreen]="true">
+
+<!-- <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
       <ion-title size="large">rios</ion-title>
     </ion-toolbar>
   </ion-header>
+</ion-content> -->
 
-  <ion-button expand="full" color="primary" (click)="getRivers()">
+<ion-header>
+  <ion-toolbar>
+    <ion-title>RÍOS MONITOREADOS </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content fullscreen>
+  <div style="margin-top:0; padding-top: 0;">
+  <ion-list *ngFor="let river of riverst" >
+    <ion-item>
+      <ion-label>
+        <h2>{{ river.nombre }}</h2>
+        <p>Longitud: {{ river.longitud }}, Latitud: {{ river.latitud }}</p>
+      </ion-label>
+      <ion-button [routerLink]="['/datos-sensores', river]" routerDirection="forward">
+        Ver Más
+      </ion-button>
+    </ion-item>
+  </ion-list>
+</div>
+
+<!-- <ion-button expand="full" color="primary" (click)="obtenerSesores()">
+    Sensor
+  </ion-button> -->
+</ion-content>
+
+
+
+
+<!-- 
+   <ion-button expand="full" color="primary" (click)="getRivers()">
     Botón 1
   </ion-button>
 
-  <!-- Segundo botón -->
+  
   <ion-button expand="full" color="secondary" (click)="filterRivers()">
     Botón 2
   </ion-button>
@@ -35,5 +62,8 @@
   <ion-button expand="full" color="secondary" (click)="filtrarUsers()">
      usuarios cercanos a rio
   </ion-button>
+  <ion-button expand="full" color="secondary" (click)="pushNoti()">
+    permiso para notificacion y token
+ </ion-button>  -->
 
-</ion-content>
+<!-- </ion-content> -->
