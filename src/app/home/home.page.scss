@@ -25,3 +25,14 @@ ion-menu-button {
     text-decoration: none;
   }
   
+  .custom-alert {
+    .alert-message {
+      font-size: 1rem;
+      color: #333;
+      text-align: justify;
+    }
+    ion-item {
+      margin-top: 1rem;
+    }
+  }
+  

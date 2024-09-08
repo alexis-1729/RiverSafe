@@ -14,11 +14,12 @@ import { NavController } from '@ionic/angular';
 })
 export class DatosSensoresPage implements OnInit {
   river: any;
+  dispositivos: any[] = [];
 
   public lineChartData: ChartDataset[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Nivel del Agua' },
     { data: [28, 48, 40, 19, 86, 27, 90], label: 'Temperatura' },
-    // Datos estáticos de ejemplo; deberías conectarlos a la base de datos para usar datos reales
+    // Datos estáticos de ejemplo; se debe conectar a la base de datos para usar datos reales
   ];
 
   public lineChartLabels: string[] = [];  // Define las etiquetas como un array de strings
@@ -41,10 +42,7 @@ export class DatosSensoresPage implements OnInit {
     private geolocation: Geolocation,
     private alert: AlertaService,
     private navCtrl: NavController
-  ) {
-    this.updateChartLabels(); // Actualizar las etiquetas del gráfico
-    this.scheduleDailyUpdate(); // Programar la actualización diaria del gráfico
-  }
+  ) {}
 
   async ngOnInit() {
     await this.storage.create();
@@ -52,8 +50,16 @@ export class DatosSensoresPage implements OnInit {
     this.disDt = await this.storage.get('disp');
     this.route.paramMap.subscribe(params => {
       this.river = JSON.parse(params.get('river') || '{}');
+      // Datos de ejemplo, conectar esto a la base de datos
+      this.dispositivos = [
+        { nombre: 'Dispositivo 1', nivelAgua: 170, velocidadCorriente: 6 },
+        { nombre: 'Dispositivo 2', nivelAgua: 50, velocidadCorriente: 18 },
+        { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 9 }
+      ];
     });
     this.obtenerSesores();
+    this.updateChartLabels(); // Actualiza las etiquetas del gráfico
+    this.scheduleDailyUpdate(); // Programa la actualización diaria del gráfico
   }
 
   updateChartLabels() {
@@ -83,6 +89,38 @@ export class DatosSensoresPage implements OnInit {
       this.updateChartLabels();
       this.scheduleDailyUpdate();
     }, millisTillMidnight);
+  }
+
+  //sistema de calculo de peligro
+  calcularNivelPeligro(nivelAgua: number, velocidadCorriente: number): number {
+    if (nivelAgua >= 200 && velocidadCorriente <= 4) {
+      return 1; // Nivel 1 - Seguro
+    } else if (nivelAgua >= 150 && nivelAgua < 200 && velocidadCorriente >= 5 && velocidadCorriente <= 8) {
+      return 2; // Nivel 2 - Seguro
+    } else if (nivelAgua >= 100 && nivelAgua < 150 && velocidadCorriente >= 9 && velocidadCorriente <= 13) {
+      return 3; // Nivel 3 - Precaución
+    } else if (nivelAgua >= 51 && nivelAgua < 100 && velocidadCorriente >= 14 && velocidadCorriente <= 17) {
+      return 4; // Nivel 4 - Precaución
+    } else if (nivelAgua <= 50 && velocidadCorriente >= 18) {
+      return 5; // Nivel 5 - Peligro
+    }
+    return 1; // Nivel predeterminado si no hay coincidencia
+  }
+
+  //colores
+  obtenerColor(nivelPeligro: number): string {
+    switch (nivelPeligro) {
+      case 1:
+      case 2:
+        return 'rgba(0, 255, 0, 0.3)'; // Verde traslúcido
+      case 3:
+      case 4:
+        return 'rgba(255, 255, 0, 0.3)'; // Amarillo traslúcido
+      case 5:
+        return 'rgba(255, 0, 0, 0.3)'; // Rojo traslúcido
+      default:
+        return 'rgba(0, 255, 0, 0.3)'; // Predeterminado
+    }
   }
 
   async obtenerSesores() {
