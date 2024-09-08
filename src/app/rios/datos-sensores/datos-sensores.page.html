@@ -1,13 +1,25 @@
-<ion-header [translucent]="true">
+
+
+
+
+<ion-header>
   <ion-toolbar>
-    <ion-title>datos-sensores</ion-title>
+    <ion-title> DATOS DE LOS SENSORES </ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">datos-sensores</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content>
+  <ion-list *ngFor="let device of sensores">
+    <ion-item>
+      <ion-label>
+        <h2>{{ device.nombre }}</h2>
+        <p>Nivel del agua: {{ device.nivelAgua }}</p>
+        <p>Temperatura: {{ device.temperatura }}°C</p>
+        <p>Velocidad de corriente: {{ device.velocidadCorriente }} m/s</p>
+      </ion-label>
+    </ion-item>
+  </ion-list>
+  <ion-button expand="block" color="primary">
+    Enviar Alerta
+  </ion-button>
 </ion-content>

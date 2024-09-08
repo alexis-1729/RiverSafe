@@ -7,7 +7,6 @@ import { Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-
   private apiUrl = 'http://localhost/riversf/public/APIU/login'; //ruta de la api
   private apiUrl2 = 'http://localhost/riversf/public/APIU/registrar';
   private apiUrl3 = 'http://localhost/riversf/public/APIU/saveUserpos';

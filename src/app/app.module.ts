@@ -10,10 +10,15 @@ import { IonicStorageModule } from '@ionic/storage-angular';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 
 
+
 @NgModule({
   declarations: [AppComponent],
   imports: [BrowserModule, IonicModule.forRoot(), AppRoutingModule, ReactiveFormsModule, HttpClientModule, IonicStorageModule.forRoot()],
   providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },Geolocation],
   bootstrap: [AppComponent],
 })
-export class AppModule {}
+
+
+export class AppModule {
+
+}

@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
-// No necesitas importar 'Label' aquí
+import { Storage } from '@ionic/storage-angular';
+import { RiogetService } from 'src/app/services/rioget.service';
+import { Geolocation } from '@ionic-native/geolocation/ngx';
+import { AlertaService } from 'src/app/services/alerta.service';
+import { NavController } from '@ionic/angular';
 
 @Component({
   selector: 'app-datos-sensores',
@@ -14,7 +18,7 @@ export class DatosSensoresPage implements OnInit {
   public lineChartData: ChartDataset[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Nivel del Agua' },
     { data: [28, 48, 40, 19, 86, 27, 90], label: 'Temperatura' },
-    // Numeros de ejemplo estaticos, se requiere conectar con la base de datos para que linechartdata contenga los datos reales
+    // Datos estáticos de ejemplo; deberías conectarlos a la base de datos para usar datos reales
   ];
 
   public lineChartLabels: string[] = [];  // Define las etiquetas como un array de strings
@@ -26,15 +30,30 @@ export class DatosSensoresPage implements OnInit {
   public lineChartLegend = true;
   public lineChartType: ChartType = 'line';
 
-  constructor(private route: ActivatedRoute) {
+  disDt: any[] = [];  // Lista de dispositivos     
+  sensores: any[] = [];
+  riverst: any[] = [];
+
+  constructor(
+    private route: ActivatedRoute,
+    private storage: Storage,
+    private riogetService: RiogetService,
+    private geolocation: Geolocation,
+    private alert: AlertaService,
+    private navCtrl: NavController
+  ) {
     this.updateChartLabels(); // Actualizar las etiquetas del gráfico
     this.scheduleDailyUpdate(); // Programar la actualización diaria del gráfico
   }
 
-  ngOnInit() {
+  async ngOnInit() {
+    await this.storage.create();
+    console.log('Hola');
+    this.disDt = await this.storage.get('disp');
     this.route.paramMap.subscribe(params => {
       this.river = JSON.parse(params.get('river') || '{}');
     });
+    this.obtenerSesores();
   }
 
   updateChartLabels() {
@@ -64,5 +83,27 @@ export class DatosSensoresPage implements OnInit {
       this.updateChartLabels();
       this.scheduleDailyUpdate();
     }, millisTillMidnight);
+  }
+
+  async obtenerSesores() {
+    console.log(this.disDt);
+    for (let i = 0; i < this.disDt.length; i++) {
+      this.riogetService.getSensor(this.disDt[i]).subscribe(response => {
+        if (response.status == 'success') {
+          console.log(response.data.length);
+          for (let i = 0; i < response.data.length; i++) {
+            this.sensores.push({
+              nivelAgua: response.data[i].sens_nivel,
+              temperatura: response.data[i].sens_temp,
+              velocidadCorriente: response.data[i].sens_vel,
+            });
+          }
+          this.storage.set('sen', this.sensores);
+          console.log('Operación de obtención de sensores por dispositivo exitosa.');
+        } else {
+          console.log('Operación fallida.');
+        }
+      });
+    }
   }
 }
