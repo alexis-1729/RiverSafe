@@ -7,10 +7,10 @@ import { Observable} from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'http://localhost/riversf/public/APIU/login'; //ruta de la api
-  private apiUrl2 = 'http://localhost/riversf/public/APIU/registrar';
-  private apiUrl3 = 'http://localhost/riversf/public/APIU/saveUserpos';
-  private apiUrl4 = 'http://localhost/riversf/public/APIU/associateToken';
+  private apiUrl = 'https://ingetec-itsz.com/Riversafe/public/APIU/login'; //ruta de la api
+  private apiUrl2 = 'https://ingetec-itsz.com/Riversafe/public/APIU/registrar';
+  private apiUrl3 = 'https://ingetec-itsz.com/Riversafe/public/APIU/saveUserpos';
+  private apiUrl4 = 'https://ingetec-itsz.com/Riversafe/public/APIU/associateToken';
 
   constructor(private http: HttpClient) { }
     
