@@ -8,12 +8,12 @@ import { Observable} from 'rxjs';
 export class AlertaService {
 
  
-  private apiUrl = 'http://localhost/riversf/public/APIU/getUserpos';
-  private apiUrl2 = 'http://localhost/riversf/public/APIU/getUserest';
-  private apiUrl3 = 'http://localhost/riversf/public/APIU/idalert';
-  private apiUrl4 = 'http://localhost/riversf/public/APIU/saveUserpos';
-  private apiUrl5 = 'http://localhost/riversf/public/APIU/associateToken';
-  private apiUrl6 = 'http://localhost/riversf/public/APIU/sendNotification';
+  private apiUrl = 'https://ingetec-itsz.com/Riversafe/public/APIU/getUserpos';
+  private apiUrl2 = 'https://ingetec-itsz.com/Riversafe/public/APIU/getUserest';
+  private apiUrl3 = 'https://ingetec-itsz.com/Riversafe/public/APIU/idalert';
+  private apiUrl4 = 'https://ingetec-itsz.com/Riversafe/public/APIU/saveUserpos';
+  private apiUrl5 = 'https://ingetec-itsz.com/Riversafe/public/APIU/associateToken';
+  private apiUrl6 = 'https://ingetec-itsz.com/Riversafe/public/APIU/sendNotification';
 
   constructor(private http: HttpClient) { }
 

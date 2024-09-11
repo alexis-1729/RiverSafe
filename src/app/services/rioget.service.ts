@@ -8,11 +8,11 @@ import { Observable} from 'rxjs';
 })
 export class RiogetService {
 
-  private apiUrl = 'http://localhost/riversf/public/APIU/obtenerRios';
-  private apiURL2 = 'http://localhost/riversf/public/APIU/obtenerListaRios';
-  private apiUrl3 = 'http://localhost/riversf/public/APIU/getDispositivos';
-  private apiUrl4 = 'http://localhost/riversf/public/APIU/obtenerubi';
-  private apiUrl5 = 'http://localhost/riversf/public/APIU/obtenSensorDia';
+  private apiUrl = 'https://ingetec-itsz.com/Riversafe/public/APIU/obtenerRios';
+  private apiURL2 = 'https://ingetec-itsz.com/Riversafe/public/APIU/obtenerListaRios';
+  private apiUrl3 = 'https://ingetec-itsz.com/Riversafe/public/APIU/getDispositivos';
+  private apiUrl4 = 'https://ingetec-itsz.com/Riversafe/public/APIU/obtenerubi';
+  private apiUrl5 = 'https://ingetec-itsz.com/Riversafe/public/APIU/obtenSensorDia';
   constructor(private http: HttpClient) { }
  
   getRio(rioid:string): Observable<any>{
