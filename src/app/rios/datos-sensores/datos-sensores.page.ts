@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ChartOptions, ChartType, ChartDataset } from 'chart.js';
+import { Chart,ChartOptions, ChartType, ChartDataset } from 'chart.js';
 import { Storage } from '@ionic/storage-angular';
 import { RiogetService } from 'src/app/services/rioget.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
