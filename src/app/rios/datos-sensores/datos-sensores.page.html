@@ -1,14 +1,11 @@
-
-
-
-
 <ion-header>
   <ion-toolbar>
-    <ion-title> Datos de los Sensores</ion-title>
+    <ion-title>Datos de los Sensores</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
+  <!-- Lista de Sensores -->
   <ion-list *ngFor="let device of sensores">
     <ion-item>
       <ion-label>
@@ -20,21 +17,19 @@
       </ion-label>
     </ion-item>
   </ion-list>
-</ion-content>
 
-<ion-content>
+  <!-- Gráfico de Sensores -->
   <div style="display: block;">
     <canvas baseChart
             [datasets]="lineChartData"
             [labels]="lineChartLabels"
             [options]="lineChartOptions"
             [legend]="lineChartLegend"
-            [chartType]="lineChartType">
+            [type]="lineChartType"> <!-- Cambié [chartType] a [type] -->
     </canvas>
   </div>
-</ion-content>
 
-<ion-content>
+  <!-- Dispositivos con nivel de peligro -->
   <div *ngFor="let dispositivo of dispositivos">
     <div class="dispositivo-card" [ngStyle]="{'background-color': obtenerColor(calcularNivelPeligro(dispositivo.nivelAgua, dispositivo.velocidadCorriente))}">
       <h2>{{ dispositivo.nombre }}</h2>
@@ -43,8 +38,9 @@
       <p>Nivel de Peligro: {{ calcularNivelPeligro(dispositivo.nivelAgua, dispositivo.velocidadCorriente) }}</p>
     </div>
   </div>
-</ion-content>
 
-<ion-button expand="block" color="primary">
-  Enviar Alerta
-</ion-button> 
+  <!-- Botón para enviar alerta -->
+  <ion-button expand="block" color="primary">
+    Enviar Alerta
+  </ion-button>
+</ion-content>

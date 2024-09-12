@@ -16,22 +16,22 @@ export class DatosSensoresPage implements OnInit {
   river: any;
   dispositivos: any[] = [];
 
-  public lineChartData: ChartDataset[] = [
+  // Definir correctamente el tipo de ChartDataset
+  public lineChartData: ChartDataset<'line'>[] = [
     { data: [65, 59, 80, 81, 56, 55, 40], label: 'Nivel del Agua' },
     { data: [28, 48, 40, 19, 86, 27, 90], label: 'Temperatura' },
-    // Datos estáticos de ejemplo; se debe conectar a la base de datos para usar datos reales
   ];
 
-  public lineChartLabels: string[] = [];  // Define las etiquetas como un array de strings
+  public lineChartLabels: string[] = [];
 
   public lineChartOptions: (ChartOptions & { annotation?: any }) = {
     responsive: true,
   };
 
   public lineChartLegend = true;
-  public lineChartType: ChartType = 'line';
+  public lineChartType: ChartType = 'line';  // Tipo de gráfico
 
-  disDt: any[] = [];  // Lista de dispositivos     
+  disDt: any[] = [];
   sensores: any[] = [];
   riverst: any[] = [];
 
@@ -47,10 +47,10 @@ export class DatosSensoresPage implements OnInit {
   async ngOnInit() {
     await this.storage.create();
     console.log('Hola');
-    this.disDt = await this.storage.get('disp');
+    this.disDt = await this.storage.get('disp') || [];  // Verificar que 'disp' tenga datos
     this.route.paramMap.subscribe(params => {
       this.river = JSON.parse(params.get('river') || '{}');
-      // Datos de ejemplo, conectar esto a la base de datos
+      // Datos de ejemplo
       this.dispositivos = [
         { nombre: 'Dispositivo 1', nivelAgua: 170, velocidadCorriente: 6 },
         { nombre: 'Dispositivo 2', nivelAgua: 50, velocidadCorriente: 18 },
@@ -58,8 +58,8 @@ export class DatosSensoresPage implements OnInit {
       ];
     });
     this.obtenerSesores();
-    this.updateChartLabels(); // Actualiza las etiquetas del gráfico
-    this.scheduleDailyUpdate(); // Programa la actualización diaria del gráfico
+    this.updateChartLabels();
+    this.scheduleDailyUpdate();
   }
 
   updateChartLabels() {
@@ -77,7 +77,7 @@ export class DatosSensoresPage implements OnInit {
 
   formatDate(date: Date): string {
     const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0'); // Los meses en JavaScript son 0-indexados
+    const month = String(date.getMonth() + 1).padStart(2, '0');
     return `${day}-${month}`;
   }
 
@@ -91,7 +91,6 @@ export class DatosSensoresPage implements OnInit {
     }, millisTillMidnight);
   }
 
-  //sistema de calculo de peligro
   calcularNivelPeligro(nivelAgua: number, velocidadCorriente: number): number {
     if (nivelAgua >= 200 && velocidadCorriente <= 4) {
       return 1; // Nivel 1 - Seguro
@@ -104,38 +103,42 @@ export class DatosSensoresPage implements OnInit {
     } else if (nivelAgua <= 50 && velocidadCorriente >= 18) {
       return 5; // Nivel 5 - Peligro
     }
-    return 1; // Nivel predeterminado si no hay coincidencia
+    return 1; // Nivel predeterminado
   }
 
-  //colores
   obtenerColor(nivelPeligro: number): string {
     switch (nivelPeligro) {
       case 1:
       case 2:
-        return 'rgba(0, 255, 0, 0.3)'; // Verde traslúcido
+        return 'rgba(0, 255, 0, 0.3)'; // Verde
       case 3:
       case 4:
-        return 'rgba(255, 255, 0, 0.3)'; // Amarillo traslúcido
+        return 'rgba(255, 255, 0, 0.3)'; // Amarillo
       case 5:
-        return 'rgba(255, 0, 0, 0.3)'; // Rojo traslúcido
+        return 'rgba(255, 0, 0, 0.3)'; // Rojo
       default:
         return 'rgba(0, 255, 0, 0.3)'; // Predeterminado
     }
   }
 
   async obtenerSesores() {
+    if (!this.disDt || this.disDt.length === 0) {
+      console.error('No hay dispositivos disponibles para obtener sensores.');
+      return;
+    }
+
     console.log(this.disDt);
     for (let i = 0; i < this.disDt.length; i++) {
       this.riogetService.getSensor(this.disDt[i]).subscribe(response => {
-        if (response.status == 'success') {
+        if (response.status === 'success') {
           console.log(response.data.length);
-          for (let i = 0; i < response.data.length; i++) {
+          response.data.forEach((sensor: { sens_nivel: any; sens_temp: any; sens_vel: any; }) => {
             this.sensores.push({
-              nivelAgua: response.data[i].sens_nivel,
-              temperatura: response.data[i].sens_temp,
-              velocidadCorriente: response.data[i].sens_vel,
+              nivelAgua: sensor.sens_nivel,
+              temperatura: sensor.sens_temp,
+              velocidadCorriente: sensor.sens_vel,
             });
-          }
+          });
           this.storage.set('sen', this.sensores);
           console.log('Operación de obtención de sensores por dispositivo exitosa.');
         } else {
