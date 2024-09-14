@@ -27,7 +27,16 @@ const routes: Routes = [
   {
   path: 'register',
     loadChildren: () => import('./register/register.module').then( m => m.RegisterPageModule)
+  },
+  {
+    path: 'foro',
+    loadChildren: () => import('./foro/foro.module').then( m => m.ForoPageModule)
+  },
+  {
+    path: 'crear-mensaje',
+    loadChildren: () => import('./foro/crear-mensaje/crear-mensaje.module').then( m => m.CrearMensajePageModule)
   }
+
 
 ];
 

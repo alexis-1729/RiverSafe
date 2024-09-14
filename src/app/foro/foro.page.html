@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-title>Foro</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let mensaje of mensajes">
+      <ion-label>
+        <h2>{{ mensaje.titulo }}</h2>
+        <p>{{ mensaje.contenido }}</p>
+        <!-- Nota de conversación finalizada si el mensaje está finalizado -->
+        <ion-note *ngIf="mensaje.finalizado" color="medium" style="opacity: 0.5;">Conversación Finalizada</ion-note>
+      </ion-label>
+      <!-- Botón de responder solo visible si el usuario es admin y el mensaje no está finalizado -->
+      <ion-button *ngIf="isAdmin && !mensaje.finalizado" (click)="responderMensaje(mensaje)">Responder</ion-button>
+      <!-- Botón de cerrar hilo solo visible si el usuario es admin y el mensaje no está finalizado -->
+      <ion-button *ngIf="isAdmin && !mensaje.finalizado" (click)="cerrarHilo(mensaje)">Cerrar Hilo</ion-button>
+    </ion-item>
+  </ion-list>
+  
+  <!-- Botón circular para añadir mensaje -->
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="danger" (click)="crearMensaje()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>
+
+<style>
+  .finalizado-label {
+    color: rgba(0, 0, 0, 0.5); /* Semitransparente */
+  }
+</style>

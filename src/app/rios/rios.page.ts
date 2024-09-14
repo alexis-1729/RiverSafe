@@ -228,7 +228,7 @@ export class RiosPage implements OnInit {
 
   isNearUser(river: { lat: number; lng: number }, userlat: any, userlng: any): boolean {
     const distance = this.calculateDistance(river.lat, river.lng, userlat, userlng);
-    const maxDistance = 50; // Distancia máxima en kilómetros para considerar que un río está "cerca"
+    const maxDistance = 100; // Distancia máxima en kilómetros para considerar que un río está "cerca"
     return distance <= maxDistance;
   }
 
