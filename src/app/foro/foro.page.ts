@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Storage } from '@ionic/storage-angular';
 @Component({
   selector: 'app-foro',
   templateUrl: './foro.page.html',
@@ -11,12 +11,18 @@ export class ForoPage implements OnInit {
     { titulo: 'Consulta de Usuario', contenido: 'Contenido del mensaje...', finalizado: true }
   ];
 
+  cuenta :string = '';
   isAdmin: boolean = false; // Lógica para determinar si el usuario es administrador
 
-  constructor() { }
+  constructor(    private storage: Storage,
+  ) { 
 
-  ngOnInit() {
+  }
+
+  async ngOnInit() {
     // Aquí se cargará los mensajes desde la base de datos o servicio
+    await this.storage.create();
+    this.cuenta = await this.storage.get('cuenta_id');
     this.cargarMensajes();
     // Aquí se debería establecer la lógica para verificar si el usuario es admin
     this.verificarSiEsAdmin();
@@ -31,7 +37,9 @@ export class ForoPage implements OnInit {
   verificarSiEsAdmin() {
     // Aquí deberías tener la lógica para determinar si el usuario actual es un administrador
     // Ejemplo: esta lógica podría estar basada en algún servicio de autenticación
+    if(this.cuenta == '1')
     this.isAdmin = true; // Cambiar según la lógica de autenticación real
+    else this.isAdmin = false;
   }
 
   responderMensaje(mensajes: any) {
