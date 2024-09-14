@@ -34,7 +34,7 @@ const routes: Routes = [
   },
   {
     path: 'crear-mensaje',
-    loadChildren: () => import('./crear-mensaje/crear-mensaje.module').then( m => m.CrearMensajePageModule)
+    loadChildren: () => import('./foro/crear-mensaje/crear-mensaje.module').then( m => m.CrearMensajePageModule)
   }
 
 
