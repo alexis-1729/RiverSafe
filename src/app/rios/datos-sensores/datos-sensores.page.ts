@@ -18,8 +18,8 @@ export class DatosSensoresPage implements OnInit {
 
   // Definir correctamente el tipo de ChartDataset
   public lineChartData: ChartDataset<'line'>[] = [
-    { data: [65, 59, 80, 81, 56, 55, 40], label: 'Nivel del Agua' },
-    { data: [28, 48, 40, 19, 86, 27, 90], label: 'Temperatura' },
+    { data: [165, 159, 140, 121, 106, 95, 80], label: 'Nivel del Agua' },
+    { data: [4, 6, 7, 9, 11, 12, 14], label: 'Velocidad del Agua' },
   ];
 
   public lineChartLabels: string[] = [];
@@ -50,11 +50,16 @@ export class DatosSensoresPage implements OnInit {
     this.disDt = await this.storage.get('disp') || [];  // Verificar que 'disp' tenga datos
     this.route.paramMap.subscribe(params => {
       this.river = JSON.parse(params.get('river') || '{}');
-      // Datos de ejemplo
+      // DATOS DE EJEMPLO ESTATICOS, CAMBIAR POR LOS DATOS REALES
       this.dispositivos = [
         { nombre: 'Dispositivo 1', nivelAgua: 170, velocidadCorriente: 6 },
-        { nombre: 'Dispositivo 2', nivelAgua: 50, velocidadCorriente: 18 },
+        { nombre: 'Dispositivo 2', nivelAgua: 70, velocidadCorriente: 14 },
         { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 9 }
+      ];
+      this.dispositivos = [
+        { nombre: 'Dispositivo 1', nivelAgua: 200, velocidadCorriente: 3 },
+        { nombre: 'Dispositivo 2', nivelAgua: 170, velocidadCorriente: 6 },
+        { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 10 }
       ];
     });
     this.obtenerSesores();

@@ -1,10 +1,31 @@
+.river-item {
+  margin: 10px 0;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
+
+.river-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
 .rio-card {
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s ease;
-    text-align: center;
-  }
-  
+  margin: 20px; /* Espacio entre los recuadros */
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.green-alert {
+  background-color: #32db64; /* Color verde para alerta baja */
+  color: white;
+}
+
+.yellow-alert {
+  background-color: #ffce00; /* Color amarillo para alerta media */
+  color: white;
+}
+
+.red-alert {
+  background-color: #f04141; /* Color rojo para alerta alta */
+  color: white;
+}
