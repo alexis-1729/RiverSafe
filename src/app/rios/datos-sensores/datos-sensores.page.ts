@@ -6,6 +6,7 @@ import { RiogetService } from 'src/app/services/rioget.service';
 import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertaService } from 'src/app/services/alerta.service';
 import { NavController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-datos-sensores',
@@ -41,7 +42,8 @@ export class DatosSensoresPage implements OnInit {
     private riogetService: RiogetService,
     private geolocation: Geolocation,
     private alert: AlertaService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router // Inyecta el Router en el constructor
   ) {}
 
   async ngOnInit() {
@@ -66,6 +68,11 @@ export class DatosSensoresPage implements OnInit {
     this.updateChartLabels();
     this.scheduleDailyUpdate();
   }
+
+  navigateToAlertaDispositivo() {
+    this.router.navigate(['/alerta-dispositivo']); // Navega a la página de alerta-dispositivo
+  }
+
 
   updateChartLabels() {
     const labels = [];
@@ -151,5 +158,7 @@ export class DatosSensoresPage implements OnInit {
         }
       });
     }
+
+    
   }
 }

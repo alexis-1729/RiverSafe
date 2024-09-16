@@ -1,0 +1,36 @@
+<<ion-header>
+  <ion-toolbar>
+    <ion-title>Enviar Alerta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <form (ngSubmit)="enviarAlerta()">
+    <ion-list>
+      <!-- Selección de dispositivos -->
+      <ion-item>
+        <ion-label>Seleccione Dispositivo(s)</ion-label>
+        <ion-select multiple="true" [(ngModel)]="selectedDevices" name="dispositivos">
+          <ion-select-option value="1">Dispositivo 1</ion-select-option>
+          <ion-select-option value="2">Dispositivo 2</ion-select-option>
+          <ion-select-option value="3">Dispositivo 3</ion-select-option>
+        </ion-select>
+      </ion-item>
+
+      <!-- Título de la alerta -->
+      <ion-item>
+        <ion-label position="floating">Título (máx. 50 caracteres)</ion-label>
+        <ion-input [(ngModel)]="alertTitle" maxlength="50" name="titulo" required></ion-input>
+      </ion-item>
+
+      <!-- Texto de la alerta -->
+      <ion-item>
+        <ion-label position="floating">Mensaje (máx. 255 caracteres)</ion-label>
+        <ion-textarea [(ngModel)]="alertMessage" maxlength="255" name="mensaje" required></ion-textarea>
+      </ion-item>
+
+      <!-- Botón "Enviar Alerta" -->
+      <ion-button expand="block" class="alert-button" (click)="confirmarEnvio()">Enviar Alerta</ion-button>
+    </ion-list>
+  </form>
+</ion-content>

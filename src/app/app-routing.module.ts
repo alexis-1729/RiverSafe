@@ -35,7 +35,12 @@ const routes: Routes = [
   {
     path: 'crear-mensaje',
     loadChildren: () => import('./foro/crear-mensaje/crear-mensaje.module').then( m => m.CrearMensajePageModule)
+  },
+  {
+    path: 'alerta-dispositivo',
+    loadChildren: () => import('./rios/datos-sensores/alerta-dispositivo/alerta-dispositivo.module').then( m => m.AlertaDispositivoPageModule)
   }
+
 
 
 ];
