@@ -5,18 +5,7 @@
 </ion-header>
 
 <ion-content>
-  <!-- Lista de Sensores -->
-  <ion-list *ngFor="let device of sensores">
-    <ion-item>
-      <ion-label>
-        <h2>{{ device.nombre }}</h2>
-        <p>Nivel del agua: {{ device.nivelAgua }}</p>
-        <p>Temperatura: {{ device.temperatura }}°C</p>
-        <p>Velocidad de corriente: {{ device.velocidadCorriente }} m/s</p>
-        <p>Último envío: {{ device.ultimoEnvio }}</p>
-      </ion-label>
-    </ion-item>
-  </ion-list>
+ 
 
   <!-- Gráfico de Sensores -->
   <div style="display: block;">
@@ -30,7 +19,8 @@
   </div>
 
   <!-- Dispositivos con nivel de peligro -->
-  <div *ngFor="let dispositivo of dispositivos">
+   <div >
+  <div  *ngFor="let dispositivo of dispositivos">
     <div class="dispositivo-card" [ngStyle]="{'background-color': obtenerColor(calcularNivelPeligro(dispositivo.nivelAgua, dispositivo.velocidadCorriente))}">
       <h2>{{ dispositivo.nombre }}</h2>
       <p>Nivel del Agua: {{ dispositivo.nivelAgua }} cm</p>
@@ -38,6 +28,7 @@
       <p>Nivel de Peligro: {{ calcularNivelPeligro(dispositivo.nivelAgua, dispositivo.velocidadCorriente) }}</p>
     </div>
   </div>
+</div>
 
   <!-- Botón "Enviar Alerta" rediseñado -->
 <ion-button expand="block" class="alert-button" (click)="navigateToAlertaDispositivo()">Enviar Alerta</ion-button>

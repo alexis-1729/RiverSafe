@@ -3,9 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Chart,ChartOptions, ChartType, ChartDataset } from 'chart.js';
 import { Storage } from '@ionic/storage-angular';
 import { RiogetService } from 'src/app/services/rioget.service';
-import { Geolocation } from '@ionic-native/geolocation/ngx';
 import { AlertaService } from 'src/app/services/alerta.service';
-import { NavController } from '@ionic/angular';
 import { Router } from '@angular/router';
 
 @Component({
@@ -16,11 +14,12 @@ import { Router } from '@angular/router';
 export class DatosSensoresPage implements OnInit {
   river: any;
   dispositivos: any[] = [];
-
+  nivelA:any[]=[];
+  velocidad:any[]=[];
   // Definir correctamente el tipo de ChartDataset
   public lineChartData: ChartDataset<'line'>[] = [
-    { data: [165, 159, 140, 121, 106, 95, 80], label: 'Nivel del Agua' },
-    { data: [4, 6, 7, 9, 11, 12, 14], label: 'Velocidad del Agua' },
+    { data: this.nivelA, label: 'Nivel del Agua' },
+    { data: this.velocidad, label: 'Velocidad del Agua' },
   ];
 
   public lineChartLabels: string[] = [];
@@ -35,44 +34,69 @@ export class DatosSensoresPage implements OnInit {
   disDt: any[] = [];
   sensores: any[] = [];
   riverst: any[] = [];
-
+  first = false;
   constructor(
     private route: ActivatedRoute,
     private storage: Storage,
     private riogetService: RiogetService,
-    private geolocation: Geolocation,
     private alert: AlertaService,
-    private navCtrl: NavController,
     private router: Router // Inyecta el Router en el constructor
   ) {}
 
   async ngOnInit() {
     await this.storage.create();
-    console.log('Hola');
     this.disDt = await this.storage.get('disp') || [];  // Verificar que 'disp' tenga datos
-    this.route.paramMap.subscribe(params => {
-      this.river = JSON.parse(params.get('river') || '{}');
-      // DATOS DE EJEMPLO ESTATICOS, CAMBIAR POR LOS DATOS REALES
-      this.dispositivos = [
-        { nombre: 'Dispositivo 1', nivelAgua: 170, velocidadCorriente: 6 },
-        { nombre: 'Dispositivo 2', nivelAgua: 70, velocidadCorriente: 14 },
-        { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 9 }
-      ];
-      this.dispositivos = [
-        { nombre: 'Dispositivo 1', nivelAgua: 200, velocidadCorriente: 3 },
-        { nombre: 'Dispositivo 2', nivelAgua: 170, velocidadCorriente: 6 },
-        { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 10 }
-      ];
-    });
-    this.obtenerSesores();
-    this.updateChartLabels();
-    this.scheduleDailyUpdate();
+    this.ejecutar();
   }
 
   navigateToAlertaDispositivo() {
     this.router.navigate(['/alerta-dispositivo']); // Navega a la página de alerta-dispositivo
   }
 
+  
+    async ejecutar(){
+      try{
+        await this.obtenerSesores();
+        for(let i = 0; i < this.dispositivos.length; i++){
+          this.velocidad.push(this.dispositivos[i].velocidadCorriente);
+          this.nivelA.push(this.dispositivos[i].nivelAgua);
+        }
+        await this.iniciar();
+        console.log("termino");
+        
+      }catch(error){
+        console.log("error", error);
+      }
+    }
+ async iniciar(){
+  return new Promise(resolve =>{
+    setTimeout(()=>{
+      this.route.paramMap.subscribe(params => {
+        this.river = JSON.parse(params.get('river') || '{}');
+        // DATOS DE EJEMPLO ESTATICOS, CAMBIAR POR LOS DATOS REALES
+        // this.dispositivos = [
+        //   { nombre: 'Dispositivo 2', nivelAgua: 200, velocidadCorriente: 3 },
+        //   { nombre: 'Dispositivo 2', nivelAgua: 170, velocidadCorriente: 6 },
+        //   { nombre: 'Dispositivo 3', nivelAgua: 110, velocidadCorriente: 10 }
+        // ];
+        for(let i = 0; i < this.sensores.length; i++){
+          this.dispositivos.push({
+            nombre: this.sensores[i].nombre,
+            nivelAgua: this.sensores[i].nivelAgua,
+            velocidadCorriente: this.sensores[i].velocidadCorriente
+          });
+        }
+        
+      });
+      resolve(true);
+    }, 2000);
+    this.updateChartLabels();
+    this.scheduleDailyUpdate();
+  });
+   
+  
+  }
+   
 
   updateChartLabels() {
     const labels = [];
@@ -146,15 +170,16 @@ export class DatosSensoresPage implements OnInit {
           console.log(response.data.length);
           response.data.forEach((sensor: { sens_nivel: any; sens_temp: any; sens_vel: any; }) => {
             this.sensores.push({
+              nombre:'Dispositivo',
               nivelAgua: sensor.sens_nivel,
-              temperatura: sensor.sens_temp,
+              // temperatura: sensor.sens_temp,
               velocidadCorriente: sensor.sens_vel,
             });
           });
           this.storage.set('sen', this.sensores);
           console.log('Operación de obtención de sensores por dispositivo exitosa.');
         } else {
-          console.log('Operación fallida.');
+          console.log('Operación fallida o no se encontraron sensores del dia');
         }
       });
     }
