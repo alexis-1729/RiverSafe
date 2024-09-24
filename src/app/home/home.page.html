@@ -1,32 +1,118 @@
-<ion-header [translucent]="true"><ion-toolbar><ion-title>
-  RIVER SAFE - "AGÜAS CON EL AWA"
-</ion-title></ion-toolbar></ion-header>
-<ion-content [fullscreen]="true">
-  <ion-card>
-   
-
-  <ion-card-content>
-
-    <!-- Introducción -->
-    <section><h2>Acerca de RiverSafe</h2><p>
-     <br><br>
-    </p></section>
+<ion-header [translucent]="true">
+  <ion-toolbar>
+    <div class="titulo_aline">
+    <ion-title class="home_tituto">
+        River Safe
+    </ion-title>
+    <ion-icon name="help-circle-outline" size="large" ></ion-icon>  
+  </div>
+  </ion-toolbar>
     
-    <!-- Preguntas -->
-     <section><h2>¿Qué es?</h2><p>
-    Es un proyecto acerca de un dispositivo electronico encargado de la medicion de varaibles cuantitativas para 
-    poder comunicarlas a las autoridades correspondientes <br><br>
-
-    </p></section><section><h2>¿Para qué es?</h2><p>
-      RiverSafe busca mantener monitoreado los caudales de rio, para que si llegase a darse una situacion
-      en la que la vida de la poblacion puede correr algun peligro, pueda notificar a la poblacion<br><br>
-
-    </p></section><section><h2>¿Cómo?</h2><p>
-      RiverSafe implementa una combinacion de sensores electronicos que asu vez se comunican, con un microcontrolador
-      (arduino), el cual gestiona y envia los correspondientes datos utilizando un componente GSM que nos da la posibilidad
-      de enviar datos utilizando la red movil, es aqui donde al almacenar los datos, estos son recuperados de una base de datos
-      para asi poder mostrarlos en la RiverApp
+  </ion-header>
+<ion-content>
+  <div class="home-card">
+    <div class="home-card-title">
+      <p>Funciones</p>
+      <i class="fa-regular fa-lightbulb" style="color:#0054e9"></i>
+       <!-- <ion-icon name="planet-outline" size="large" color="primary"></ion-icon>  -->
+    </div>
+  
+    <div >
+    
+    <ion-card class="card">
+      <div class="flexx">
+        <p class="home-card-sub">Alerta</p>
+        <i class="fa-solid fa-triangle-exclamation" style="color: red;"></i>
+      </div>
       
-    </p></section>
+      <div  class="home-card-text">
+        <p>
+        Enviada por las autoridades, la cual se emite a los usuarios cercanos a el rio en cuestion
+        </p>
+      </div>
+    </ion-card>
 
-  </ion-card-content></ion-card></ion-content>
+    <ion-card class="card">
+      <div class="flexx">
+        <p class="home-card-sub">Niveles de Peligrosidad</p>
+        <i class="fa-solid fa-circle-exclamation" style="color: orange;"></i>
+      </div>
+      
+      <div  class="home-card-text">
+        Segun sean los datos recolectados por el dispositivo, se le asignara un nivel de Peligrosidad
+        <ol>
+          <li>
+          <div>
+            <ion-chip color="success">
+              Seguro
+            </ion-chip>
+          </div></li>
+          <li>
+            <ion-chip color="warning">
+              Precaucion
+            </ion-chip>
+          </li>
+          <li>
+            <ion-chip color="danger">
+              Peligro
+            </ion-chip>
+          </li>
+        </ol>
+      </div>
+    </ion-card>
+  
+  </div>
+</div>
+<div class="home-card">
+  <div class="home-card-title">
+    <p>Acerca de RiverSafe</p>
+    <ion-icon name="chatbubble-ellipses-outline" size="large" color="primary"></ion-icon>
+  </div>
+
+  <div class="home-grid">
+  
+  <ion-card class="card-1">
+    <div class="flexx">
+      <p class="home-card-sub">¿Que es?</p>
+      <i class="fa-solid fa-circle-question"  style="color: #A02334;"></i>
+    </div>
+
+    <div  class="home-card-text">
+      <p>
+        Es un sistema de monitoreo y alerta temprana, el cual es un dispositivo electrónico colocado a través de los diferentes puntos estratégicos de un rio
+      </p>
+    </div>
+  </ion-card>
+
+  <ion-card class="card-2">
+    <div class="flexx">
+      <p class="home-card-sub">¿Para que es?</p>
+      <i class="fa-solid fa-shield" style="color: #16325B;"></i>
+    </div>
+
+    <div  class="home-card-text">
+      <p>
+        Para proporcionar datos precisos a las autoridades en tiempo real,
+         sobre los caudales de los rios para poder monitorearlos y en caso de ser
+         necesario enviar una alerta a los civiles cercanos.
+      </p>
+    </div>
+  </ion-card>
+
+  <ion-card class="card-3">
+    <div class="flexx">
+      <p class="home-card-sub">¿Como funciona?</p>
+      <i class="fa-solid fa-location-crosshairs" style="color: #399918;"></i>    </div>
+
+    <div  class="home-card-text">
+      <p>
+        Los datos son recolectados a traves de un dispositivo electronico, el cual envia
+        los datos a traves de un modulo de comunicacion GSM a una base de datos la cual
+        prporciona todos estos datos a la app movil y asi conectar a los usuarios
+      </p>
+    </div>
+  </ion-card>
+</div>
+
+</div>
+</ion-content>

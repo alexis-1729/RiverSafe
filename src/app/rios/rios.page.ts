@@ -17,67 +17,33 @@ export class RiosPage implements OnInit {
   userId: string = '';
   cuentaid: string = '';
   estadoId: string = '';
-  usuario: string = '';
-  nombre: string = '';
-  apellido: string = '';
   rioid: string = '';
-  email: string = '';
   riverubi_id: string = '';
   disDt: any[] = []; // Lista de dispositivos
   userLocation: { lat: number; lng: number } = { lat: 0, lng: 0 };
   rivers: any[] = []; // Lista de ríos
   riverst: any[] = []; // Ríos filtrados
   sensores: any[] = [];
-  usuarios: any[] = [];
   userspos: any[] = [];
-  tok: any;
-  titl: any = 'peligro rio';
-  body: any = 'Favor de realizar las medidas preventivas';
-  rios: any[] = [];
-  rioUbilat: any;
-  rioUbilng: any;
+   
 
   constructor(
     private storage: Storage,
     private riogetService: RiogetService,
-    private geolocation: Geolocation,
-    private alert: AlertaService,
-    private authS: AuthService,
-    private navCtrl: NavController
+    private alert: AlertaService
   ) {}
 
   async ngOnInit() {
     await this.storage.create();
     this.userId = await this.storage.get('user_id');
-    this.usuario = await this.storage.get('username');
     this.cuentaid = await this.storage.get('cuenta_id');
     this.rioid = await this.storage.get('user_rioid');
-    this.nombre = await this.storage.get('user_nombre');
-    this.email = await this.storage.get('user_email');
     this.estadoId = await this.storage.get('est_id');
-    this.apellido = await this.storage.get('user_apellido');
     await this.getUserLocation();
     this.ejecutar();
 
     // Datos de ejemplo
-    this.rios = [
-      {
-        nombre: 'Río 1',
-        dispositivos: [
-          { nivelAgua: 170, velocidadCorriente: 6 },
-          { nivelAgua: 70, velocidadCorriente: 14 },
-          { nivelAgua: 110, velocidadCorriente: 9 }
-        ]
-      },
-      {
-        nombre: 'Río 2',
-        dispositivos: [
-          { nivelAgua: 200, velocidadCorriente: 3 },
-          { nivelAgua: 150, velocidadCorriente: 7 },
-          { nivelAgua: 123, velocidadCorriente: 8 }
-        ]
-      }
-    ];
+    
   }
 
   async obtenerRio() {
@@ -98,7 +64,6 @@ export class RiosPage implements OnInit {
     return new Promise((resolve, reject) => {
       this.riogetService.getListaDispositivos(id).subscribe(response => {
         if (response.status == 'success') {
-          console.log('Datos de dispositivos recibidos:', response.data); // Verificar aquí
   
           // Limpiar disDt antes de agregar los nuevos dispositivos
           this.disDt = [];
@@ -119,16 +84,8 @@ export class RiosPage implements OnInit {
 
   async getUserLocation() {
     try {
-      const position = await this.geolocation.getCurrentPosition();
-      this.userLocation.lat = position.coords.latitude;
-      this.userLocation.lng = position.coords.longitude;
-      this.alert.savePos(this.userId, this.userLocation.lat, this.userLocation.lng).subscribe(response => {
-        if (response.status == 'success') {
-          console.log('Ubicación registrada con éxito');
-        } else {
-          console.log('Error al guardar ubicación');
-        }
-      });
+      this.userLocation.lat = await this.storage.get('userLat');
+      this.userLocation.lng = await this.storage.get('userLng'); 
     } catch (error) {
       console.error('Error obteniendo la ubicación:', error);
     }
@@ -146,7 +103,7 @@ export class RiosPage implements OnInit {
           }
         });
         resolve(true);
-      }, 2000);
+      }, 1000);
     });
   }
 
@@ -198,7 +155,7 @@ export class RiosPage implements OnInit {
         await Promise.all(riverPromises);
   
         resolve(true);
-      }, 2000);
+      }, 1000);
     });
   }
   

@@ -28,12 +28,14 @@ export class LoginPage {
     this.menuS.habilitarMenu(false);
    }
 
+   //calculo de ubicacion
   async getPos(){
     try {
       const position = await this.geolocation.getCurrentPosition();
       this.storage.set('userLat',position.coords.latitude);
       this.storage.set('userLng',position.coords.longitude);
       this.guardarPos(position.coords.latitude,position.coords.longitude);
+      console.log('Ubicacion guardada');
     } catch (error) {
       console.error('Error obteniendo la ubicación:', error);
     }
@@ -48,6 +50,7 @@ export class LoginPage {
       });
    }
 
+   //-------------
   login() {
     this.authService.login(this.username, this.password).subscribe(response => {
       if (response.status === 'success') {
@@ -61,6 +64,7 @@ export class LoginPage {
         this.storage.set('user_apellido', response.data.user_apellido);
         this.storage.set('token', response.data.token);
         this.menuS.habilitarMenu(true);
+       //llamada a calculo de ubicacion
         this.getPos();
         this.navCtrl.navigateForward('/home');
       } else {

@@ -1,0 +1,28 @@
+.campos{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.centrar{
+    max-width: 900px;
+    min-width: 400px;
+    width: 600px;
+    margin: 0 auto;
+}
+
+.item{
+    border-radius: 20px;
+    margin-bottom: 10px;
+}
+
+.card-1{
+    display: flex;
+    gap: 20px;
+}
+
+.buton{
+    border-radius: 20px;
+    max-width: 400px;
+}

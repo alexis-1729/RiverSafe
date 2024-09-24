@@ -1,0 +1,39 @@
+.imagen{
+    width: 200px;
+    height: 200px;
+    justify-content: center;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.centrar{
+    margin: 0 auto;
+}
+
+.form{
+    width: 80%;
+    margin:0 auto;
+    
+}
+
+.flexx{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 15px;
+}
+
+.data{
+   
+    //min-width: 400px;
+    width: min(500px, 400);
+    margin:0 auto;
+}
+
+.data{
+    ion-item{
+        border-radius: 20px;
+        margin-bottom: 10px;
+    }
+}

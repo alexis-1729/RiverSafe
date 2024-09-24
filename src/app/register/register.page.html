@@ -4,18 +4,24 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content>
+<div class="campo centrar">
   <form (ngSubmit)="register()">
-    <ion-item>
+
+    <div class="card-1">
+    <ion-item class="item">
       <ion-label position="floating">Nombre</ion-label>
       <ion-input type="text" [(ngModel)]="name" name="name" required></ion-input>
     </ion-item>
 
+  
     <ion-item>
       <ion-label position="floating">Apellidos</ion-label>
       <ion-input type="text" [(ngModel)]="apellido" name="apellido" required></ion-input>
     </ion-item>
 
+  </div>
+
+  <div class="card-1"> 
     <ion-item>
       <ion-label position="floating">Nombre de Usuario</ion-label>
       <ion-input type="text" [(ngModel)]="username" name="username" required></ion-input>
@@ -25,7 +31,9 @@
       <ion-label position="floating">Correo Electrónico</ion-label>
       <ion-input type="email" [(ngModel)]="email" name="email" required></ion-input>
     </ion-item>
+  </div>
 
+  <div class="card-1">
     <ion-item>
       <ion-label position="floating">Numero de Celular</ion-label>
       <ion-input type="tel" [(ngModel)]="celular" name="celular" required></ion-input>
@@ -40,7 +48,9 @@
           </ion-select-option>
         </ion-select>
       </ion-item>
+    </div>
 
+    <div class="card-1">
     <ion-item>
       <ion-label position="floating">Contraseña</ion-label>
       <ion-input type="password" [(ngModel)]="password" name="password" required></ion-input>
@@ -50,6 +60,7 @@
       <ion-label position="floating">Confirmar Contraseña</ion-label>
       <ion-input type="password" [(ngModel)]="repassword" name="repassword" required></ion-input>
     </ion-item>
-    <ion-button expand="full" type="submit">Registrarse</ion-button>
+  </div>
+    <ion-button class="buton" type="submit">Registrarse</ion-button>
   </form>
-</ion-content>
+</div>

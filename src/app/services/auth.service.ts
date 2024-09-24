@@ -11,7 +11,7 @@ export class AuthService {
   private apiUrl2 = 'https://ingetec-itsz.com/Riversafe/public/APIU/registrar';
   private apiUrl3 = 'https://ingetec-itsz.com/Riversafe/public/APIU/saveUserpos';
   private apiUrl4 = 'https://ingetec-itsz.com/Riversafe/public/APIU/associateToken';
-
+  private apiUrl5 = 'http://localhost/riversf/public/APIU/logout';
   constructor(private http: HttpClient) { }
     
   //logear 
@@ -71,4 +71,7 @@ export class AuthService {
     return this.http.post<any>(this.apiUrl4,body);
    }
 
+   logout():Observable<any>{
+    return this.http.get(this.apiUrl5);
+   }
 }

@@ -59,10 +59,8 @@ export class AlertaDispositivoPage implements OnInit {
 
   enviarAlerta() {
     const alertData = {
-      dispositivos: this.selectedDevices,
       titulo: this.alertTitle,
       mensaje: this.alertMessage,
-      usuario: this.nombreUsuario,
     };
 
     // Envía la alerta utilizando el servicio

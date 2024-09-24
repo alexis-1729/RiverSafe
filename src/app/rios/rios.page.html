@@ -10,16 +10,22 @@
 
 <ion-header>
   <ion-toolbar>
-    <ion-title>RÍOS MONITOREADOS CERCANOS A TU ZONA</ion-title>
+    <div class="titulo_aline">
+    <p class="home_titulo">
+        Rios Monitoreados cerca de tu 
+    </p>
+    <ion-icon name="location-outline" size="large"></ion-icon>
+  </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content fullscreen>
-  <div style="margin-top:0; padding-top: 0;">
+  <div class="card-rios">
     <ion-list>
       <!-- Recorremos la lista de ríos -->
       <ion-card *ngFor="let river of riverst" class="rio-card">
         <!-- El encabezado del recuadro cambia de color según la alerta -->
+       <div class="card">
         <ion-card-header [ngClass]="getAlertaClass(river.alertLevel)">
           <ion-card-title>{{ river.nombre }}</ion-card-title>
           <p>Nivel de Alerta: {{ river.alertLevel }}</p> <!-- Mostrar nivel de alerta -->
@@ -28,15 +34,17 @@
 
         <!-- Contenido del recuadro -->
         <ion-card-content>
-          <p>Longitud: {{ river.longitud }}</p>
-          <p>Latitud: {{ river.latitud }}</p>
-          <p>Punto de Monitoreo: {{ river.puntoMonitoreo }}</p>
-
+          <div class="flexx">
+            <div> <p>Longitud: {{ river.longitud }}</p>
+              <p>Latitud: {{ river.latitud }}</p></div>
+         
           <!-- Botón Ver Más -->
-          <ion-button expand="full" [routerLink]="['/datos-sensores', river]" routerDirection="forward">
+          <ion-button  [routerLink]="['/datos-sensores', river]" routerDirection="forward">
             Ver Más
           </ion-button>
+        </div>
         </ion-card-content>
+       </div>
       </ion-card>
     </ion-list>
   </div>
